@@ -20,18 +20,6 @@ public class GlobalExceptionHandler {
 
     private final Logger LOG = Logger.getLogger(GlobalExceptionHandler.class.getName());
 
-    /**
-     * Handle UsernameNotFoundException
-     *
-     * @param ex exception
-     * @return response entity
-     */
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        LOG.severe(ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
 
     /**
      * Handle all other exceptions
@@ -41,9 +29,23 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        LOG.severe(ex.getMessage());
+        LOG.severe(ex.getClass().getName() + " : " + ex.getMessage() + " : " + HttpStatus.INTERNAL_SERVER_ERROR.value());
         ErrorResponse response = new ErrorResponse(ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    /**
+     * Handle Username Exceptions -
+     *
+     * @param ex exception
+     * @return response entity
+     */
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ErrorResponse> handleUserException(UserException ex) {
+        LOG.severe(ex.getClass().getName() + " : " + ex.getMessage() + " : " + ex.getStatus());
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getStatus().value());
+        return new ResponseEntity<>(response, ex.getStatus());
     }
 
 }

@@ -1,10 +1,12 @@
 package com.deinterlab.userservice.service;
 
+import com.deinterlab.userservice.exception.UserException;
 import com.deinterlab.userservice.model.AuthResponse;
 import com.deinterlab.userservice.model.User;
 import com.deinterlab.userservice.repository.UserRepository;
 import com.deinterlab.userservice.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -28,16 +30,16 @@ public class UserService {
     }
 
     /**
-     * Create a new user and return a JWT token
+     * Create a new user
      *
      * @param email    user email
      * @param password user password
-     * @return token
+     * @return response
      */
     public AuthResponse createUser(String email, String password) {
         // Check if the user already exists
         if (userRepository.findUserByEmail(email).isPresent()) {
-            throw new UsernameNotFoundException("User already exists");
+            throw new UserException( "User already exists",HttpStatus.BAD_REQUEST);
         }
         // Create a new User object
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -46,7 +48,7 @@ public class UserService {
         // Save the user to the database
         userRepository.save(user);
 
-        return authenticateUser(email, password);
+        return new AuthResponse(200, "User created successfully");
     }
 
     /**
@@ -60,12 +62,12 @@ public class UserService {
         Optional<User> userByEmail = userRepository.findUserByEmail(email);
 
         if (userByEmail.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UserException("User not found", HttpStatus.BAD_GATEWAY);
         } else if (BCrypt.checkpw(password, userByEmail.get().getPassword())) {
-            String token = jwtUtil.generateToken(email);
+            String token = jwtUtil.generateToken(email, userByEmail.get().getId());
             return new AuthResponse(token);
         } else {
-            throw new UsernameNotFoundException("Invalid credentials");
+            throw new UserException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
     }

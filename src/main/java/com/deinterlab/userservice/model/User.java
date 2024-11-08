@@ -20,24 +20,40 @@ public class User {
     @Column(nullable = false, name = "password")
     private String password;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(nullable = false, name = "role")
-    private String role;
+    private String role = "ROLE_USER";  // Default role assigned directly
 
     public User() {
+        // Default constructor
     }
 
     public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-        this.role = "ROLE_USER";
+        this(email, password, null, null, "ROLE_USER");
     }
 
     public User(String email, String password, String role) {
+        this(email, password, null, null, role);
+    }
+
+    public User(String email, String password, String firstName, String lastName) {
+        this(email, password, firstName, lastName, "ROLE_USER");
+    }
+
+    public User(String email, String password, String firstName, String lastName, String role) {
         this.email = email;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.role = role;
     }
 
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -70,4 +86,19 @@ public class User {
         this.role = role;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Utility class for JWT token generation and validation
@@ -31,17 +32,19 @@ public class JwtUtil {
 
 
     /**
-     * Generate a JWT token for the given username
+     * Generate a JWT token for the given email and UUID
      *
-     * @param username String
+     * @param email String
+     * @param id UUID
      * @return JWT token
      */
-    public String generateToken(String username) {
+    public String generateToken(String email, UUID id) {
 
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .signWith(getSecretKey().getPrivate(), alg)
                 .issuedAt(new Date())
+                .claim("userId", id)
                 .compact();
     }
 

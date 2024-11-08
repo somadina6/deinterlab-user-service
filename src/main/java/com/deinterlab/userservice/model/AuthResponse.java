@@ -13,6 +13,10 @@ public class AuthResponse extends BaseRestResponse<String> {
         this.token = token;
     }
 
+    public AuthResponse(int status, String message) {
+        super(status, message, null);
+    }
+
     public String getToken() {
         return token;
     }

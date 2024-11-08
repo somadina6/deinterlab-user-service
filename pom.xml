@@ -11,7 +11,7 @@
     <groupId>com.deinterlab</groupId>
     <artifactId>user-service</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <name>user-service</name>
+    <name>deinterlab-user-service</name>
     <description>user-service</description>
     <url/>
     <licenses>
@@ -119,11 +119,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>0.12.6</version>
-        </dependency>
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
