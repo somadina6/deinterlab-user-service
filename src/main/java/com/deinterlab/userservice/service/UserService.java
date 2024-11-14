@@ -1,6 +1,8 @@
 package com.deinterlab.userservice.service;
 
+import com.deinterlab.userservice.dto.UserDTO;
 import com.deinterlab.userservice.exception.UserException;
+import com.deinterlab.userservice.model.AuthRequest;
 import com.deinterlab.userservice.model.AuthResponse;
 import com.deinterlab.userservice.model.User;
 import com.deinterlab.userservice.repository.UserRepository;
@@ -32,18 +34,17 @@ public class UserService {
     /**
      * Create a new user
      *
-     * @param email    user email
-     * @param password user password
+     * @param authRequest user details
      * @return response
      */
-    public AuthResponse createUser(String email, String password) {
+    public AuthResponse createUser(AuthRequest authRequest) {
         // Check if the user already exists
-        if (userRepository.findUserByEmail(email).isPresent()) {
-            throw new UserException( "User already exists",HttpStatus.BAD_REQUEST);
+        if (userRepository.findUserByEmail(authRequest.getEmail()).isPresent()) {
+            throw new UserException("User already exists", HttpStatus.BAD_REQUEST);
         }
         // Create a new User object
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        User user = new User(email, hashedPassword);
+        String hashedPassword = BCrypt.hashpw(authRequest.getPassword(), BCrypt.gensalt());
+        User user = new User(authRequest.getEmail(), hashedPassword, authRequest.getFirstName(), authRequest.getLastName());
 
         // Save the user to the database
         userRepository.save(user);
@@ -65,7 +66,14 @@ public class UserService {
             throw new UserException("User not found", HttpStatus.BAD_GATEWAY);
         } else if (BCrypt.checkpw(password, userByEmail.get().getPassword())) {
             String token = jwtUtil.generateToken(email, userByEmail.get().getId());
-            return new AuthResponse(token);
+            UserDTO userDTO = new UserDTO(
+                    userByEmail.get().getId(),
+                    userByEmail.get().getEmail(),
+                    userByEmail.get().getFirstName(),
+                    userByEmail.get().getLastName(),
+                    userByEmail.get().getRole()
+            );
+            return new AuthResponse(token, userDTO);
         } else {
             throw new UserException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }

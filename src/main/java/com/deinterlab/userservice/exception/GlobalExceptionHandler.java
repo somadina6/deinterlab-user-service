@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.logging.Logger;
 
@@ -30,6 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         LOG.severe(ex.getClass().getName() + " : " + ex.getMessage() + " : " + HttpStatus.INTERNAL_SERVER_ERROR.value());
+        LOG.severe("Stack trace: " + ex);
         ErrorResponse response = new ErrorResponse(ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

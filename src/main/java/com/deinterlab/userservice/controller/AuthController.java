@@ -3,13 +3,16 @@ package com.deinterlab.userservice.controller;
 import com.deinterlab.userservice.model.AuthRequest;
 import com.deinterlab.userservice.model.AuthResponse;
 import com.deinterlab.userservice.model.BaseRestResponse;
+import com.deinterlab.userservice.model.RegisterValidationGroup;
 import com.deinterlab.userservice.security.JwtUtil;
 import com.deinterlab.userservice.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody @Valid AuthRequest authRequest, BindingResult bindingResult) {
+    public ResponseEntity<Object> register(@RequestBody @Validated({Default.class, RegisterValidationGroup.class}) AuthRequest authRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<String> errorMessages = bindingResult.getAllErrors()
                     .stream()
@@ -55,7 +58,7 @@ public class AuthController {
                     .badRequest().body(new BaseRestResponse<>(HttpStatus.BAD_REQUEST.value(), "Invalid request", errorMessages));
         }
 
-        AuthResponse authResponse = userService.createUser(authRequest.getEmail(), authRequest.getPassword());
+        AuthResponse authResponse = userService.createUser(authRequest);
         return ResponseEntity.ok(authResponse);
     }
 }

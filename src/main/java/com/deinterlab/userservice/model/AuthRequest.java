@@ -15,12 +15,24 @@ public class AuthRequest {
     @NotBlank (message = "Password is mandatory")
     private String password;
 
+    @NotNull(message = "First name is mandatory", groups = RegisterValidationGroup.class)
+    private String firstName;
+
+    @NotNull(message = "Last name is mandatory", groups = RegisterValidationGroup.class)
+    private String lastName;
+
     public AuthRequest() {
     }
 
     public AuthRequest(String email, String password) {
+        this(email, password, null, null);
+    }
+
+    public AuthRequest(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -37,5 +49,21 @@ public class AuthRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

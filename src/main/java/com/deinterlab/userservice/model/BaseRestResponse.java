@@ -39,4 +39,9 @@ public class BaseRestResponse<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    // To string
+    public String toString() {
+        return "BaseRestResponse(status=" + this.getStatus() + ", message=" + this.getMessage() + ", data=" + this.getData() + ")";
+    }
 }
