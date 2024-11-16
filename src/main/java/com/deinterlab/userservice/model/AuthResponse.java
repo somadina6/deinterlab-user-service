@@ -5,12 +5,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Represents an authentication response with status, message, token, and user data.
+ */
 public class AuthResponse extends BaseRestResponse<UserDTO> {
 
-    private String token;
-    private UserDTO data;
+    private final String token;
 
-    // Constructor with arguments
+    /**
+     * Full constructor to create an AuthResponse.
+     *
+     * @param status  HTTP status code.
+     * @param message Response message.
+     * @param token   JWT token.
+     * @param data    User data.
+     */
     @JsonCreator
     public AuthResponse(@JsonProperty("status") int status,
                         @JsonProperty("message") String message,
@@ -18,67 +27,69 @@ public class AuthResponse extends BaseRestResponse<UserDTO> {
                         @JsonProperty("data") UserDTO data) {
         super(status, message, data);
         this.token = token;
-        this.data = data;
     }
 
-
     /**
-     * Create a new AuthResponse object
+     * Constructor to create an AuthResponse with only a token.
      *
-     * @param token JWT token
+     * @param token JWT token.
      */
     public AuthResponse(String token) {
-        super(HttpStatus.OK.value(), "User authenticated", null);
-        this.token = token;
+        this(HttpStatus.OK.value(), "User authenticated", token, null);
     }
 
     /**
-     * Create a new AuthResponse object
+     * Constructor to create an AuthResponse with a token and user data.
      *
-     * @param token JWT token
-     * @param data  response data
+     * @param token JWT token.
+     * @param data  User data.
      */
     public AuthResponse(String token, UserDTO data) {
-        super(HttpStatus.OK.value(), "User authenticated", data);
-        this.token = token;
-        this.data = data;
+        this(HttpStatus.OK.value(), "User authenticated", token, data);
     }
 
     /**
-     * Create a new AuthResponse object
+     * Constructor to create an AuthResponse with status and message.
      *
-     * @param status  response status
-     * @param message response message
+     * @param status  HTTP status code.
+     * @param message Response message.
      */
     public AuthResponse(int status, String message) {
-        super(status, message, null);
+        this(status, message, null, null);
     }
 
     /**
-     * Create a new AuthResponse object
+     * Constructor to create an AuthResponse with status, message, and token.
      *
-     * @param status  response status
-     * @param message response message
-     * @param token   JWT token
+     * @param status  HTTP status code.
+     * @param message Response message.
+     * @param token   JWT token.
      */
     public AuthResponse(int status, String message, String token) {
-        super(status, message, null);
-        this.token = token;
+        this(status, message, token, null);
     }
 
+    /**
+     * Gets the JWT token.
+     *
+     * @return JWT token.
+     */
     public String getToken() {
         return token;
     }
 
-    public UserDTO getData() {
-        return data;
-    }
-
+    /**
+     * Returns a string representation of the AuthResponse.
+     *
+     * @return String representation of AuthResponse.
+     */
     @Override
     public String toString() {
-        return "AuthResponse{" +
-                "token='" + token + '\'' +
-                ", data=" + data +
-                '}';
+        return new StringBuilder()
+                .append("AuthResponse{")
+                .append("token='").append(token).append('\'')
+                .append(", data=").append(getData())
+                .append('}')
+                .toString();
     }
 }

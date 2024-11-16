@@ -73,11 +73,10 @@ class UserServiceTest {
 
         AuthResponse response = userService.authenticateUser(email, password);
         assertEquals(200, response.getStatus());
-        assertNotNull(response.getToken());
+        assertNotNull(response.getToken(), "Token should not be null");
         assertEquals("User authenticated", response.getMessage());
-        assertEquals("Somadina", response.getData().getFirstName());
-        assertEquals("Eze", response.getData().getLastName());
-        assertEquals("ROLE_USER", response.getData().getRole());
+        assertNull(response.getData(), "Data should be null");
+
 
         // Test for user to throw an exception if user does not exist
         UserException exception = assertThrows(UserException.class, () -> userService.authenticateUser("somadina7@gmail.com", password));
@@ -86,7 +85,7 @@ class UserServiceTest {
 
         // Test for user to throw an exception if password is incorrect
         exception = assertThrows(UserException.class, () -> userService.authenticateUser(email, "wrongpassword"));
-        assertEquals("Invalid credentials", exception.getMessage());
+        assertEquals("Invalid email / password", exception.getMessage());
         assertEquals(401, exception.getStatus().value());
 
     }

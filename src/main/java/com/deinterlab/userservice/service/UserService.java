@@ -65,7 +65,6 @@ public class UserService {
         if (userByEmail.isEmpty()) {
             throw new UserException("User not found", HttpStatus.BAD_GATEWAY);
         } else if (BCrypt.checkpw(password, userByEmail.get().getPassword())) {
-            String token = jwtUtil.generateToken(email, userByEmail.get().getId());
             UserDTO userDTO = new UserDTO(
                     userByEmail.get().getId(),
                     userByEmail.get().getEmail(),
@@ -73,9 +72,10 @@ public class UserService {
                     userByEmail.get().getLastName(),
                     userByEmail.get().getRole()
             );
-            return new AuthResponse(token, userDTO);
+            String token = jwtUtil.generateToken(userDTO);
+            return new AuthResponse(token);
         } else {
-            throw new UserException("Invalid credentials", HttpStatus.UNAUTHORIZED);
+            throw new UserException("Invalid email / password", HttpStatus.UNAUTHORIZED);
         }
 
     }

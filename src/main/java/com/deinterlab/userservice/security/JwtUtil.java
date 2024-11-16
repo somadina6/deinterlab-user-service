@@ -1,9 +1,12 @@
 package com.deinterlab.userservice.security;
 
+import com.deinterlab.userservice.dto.UserDTO;
+import com.deinterlab.userservice.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import io.jsonwebtoken.security.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -21,6 +24,12 @@ public class JwtUtil {
     /** Algorithm for the JWT token */
     private final SignatureAlgorithm alg = Jwts.SIG.RS512; //or PS512, RS256
 
+
+    /**
+     * Constructor
+     */
+    public JwtUtil() {}
+
     /**
      * Get the secret key for the JWT token
      *
@@ -32,19 +41,19 @@ public class JwtUtil {
 
 
     /**
-     * Generate a JWT token for the given email and UUID
+     * Generate a JWT token
      *
-     * @param email String
-     * @param id UUID
-     * @return JWT token
+     * @param user UserDTO
+     * @return token
      */
-    public String generateToken(String email, UUID id) {
+    public String generateToken(UserDTO user) {
 
         return Jwts.builder()
-                .subject(email)
+                .subject(user.getEmail())
                 .signWith(getSecretKey().getPrivate(), alg)
                 .issuedAt(new Date())
-                .claim("userId", id)
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .claim("userData", user)
                 .compact();
     }
 

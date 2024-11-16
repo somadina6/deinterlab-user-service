@@ -103,7 +103,7 @@ class AuthControllerTest {
 
         // Then
         assertEquals(401, loginResult.getResponse().getStatus(), "Status should be 401");
-        assertTrue(loginResult.getResponse().getContentAsString().contains("Invalid credentials"),
+        assertTrue(loginResult.getResponse().getContentAsString().contains("Invalid email / password"),
                 "Response should contain error message");
     }
 
@@ -178,12 +178,7 @@ class AuthControllerTest {
         assertNotNull(response, "Response should not be null");
         assertNotNull(response.getToken(), "Token should be present");
         assertEquals(200, response.getStatus(), "Status should be 200");
-
-        UserDTO userData = response.getData();
-        assertNotNull(userData, "User data should be present");
-        assertEquals(TEST_FIRST_NAME, userData.getFirstName(), "First name should match");
-        assertEquals(TEST_LAST_NAME, userData.getLastName(), "Last name should match");
-        assertEquals(TEST_EMAIL, userData.getEmail(), "Email should match");
+        assertEquals("User authenticated", response.getMessage(), "Message should indicate successful authentication");
     }
 
     private AuthResponse parseResponse(MvcResult mvcResult) throws Exception {
