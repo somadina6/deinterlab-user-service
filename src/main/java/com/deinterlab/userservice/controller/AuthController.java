@@ -1,9 +1,6 @@
 package com.deinterlab.userservice.controller;
 
-import com.deinterlab.userservice.model.AuthRequest;
-import com.deinterlab.userservice.model.AuthResponse;
-import com.deinterlab.userservice.model.BaseRestResponse;
-import com.deinterlab.userservice.model.RegisterValidationGroup;
+import com.deinterlab.userservice.model.*;
 import com.deinterlab.userservice.security.JwtUtil;
 import com.deinterlab.userservice.service.UserService;
 import jakarta.validation.Valid;
@@ -38,9 +35,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody AuthRequest authRequest, BindingResult bindingResult) {
-        logger.debug("Authenticating user with email: {}", authRequest.getEmail());
-        logger.debug("Authenticating user with password: {}", authRequest.getPassword());
+    public ResponseEntity<Object> login(@Valid @RequestBody User user, BindingResult bindingResult) {
+        logger.debug("Authenticating user with email: {}", user.getEmail());
+        logger.debug("Authenticating user with password: {}", user.getPassword());
 
         if (bindingResult.hasErrors()) {
             List<String> errorMessages = bindingResult.getAllErrors()
@@ -51,12 +48,12 @@ public class AuthController {
                     .body(new BaseRestResponse<>(HttpStatus.BAD_REQUEST.value(), "Invalid Email/Password", errorMessages));
         }
 
-        AuthResponse authResponse = userService.authenticateUser(authRequest.getEmail(), authRequest.getPassword());
+        AuthResponse authResponse = userService.authenticateUser(user.getEmail(), user.getPassword());
         return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody @Validated({Default.class, RegisterValidationGroup.class}) AuthRequest authRequest, BindingResult bindingResult) {
+    public ResponseEntity<Object> register(@RequestBody @Validated({Default.class, RegisterValidationGroup.class}) User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<String> errorMessages = bindingResult.getAllErrors()
                     .stream()
@@ -65,12 +62,13 @@ public class AuthController {
             return ResponseEntity
                     .badRequest().body(new BaseRestResponse<>(HttpStatus.BAD_REQUEST.value(), "Invalid request", errorMessages));
         }
-        logger.debug("Registering user with email: {}", authRequest.getEmail());
-        logger.debug("Registering user with password: {}", authRequest.getPassword());
-        logger.debug("Registering user with first name: {}", authRequest.getFirstName());
-        logger.debug("Registering user with last name: {}", authRequest.getLastName());
+        logger.debug("Registering user with email: {}", user.getEmail());
+        logger.debug("Registering user with password: {}", user.getPassword());
+        logger.debug("Registering user with first name: {}", user.getFirstName());
+        logger.debug("Registering user with last name: {}", user.getLastName());
+        logger.debug("Registering user with phone number: {}", user.getPhoneNumber());
 
-        AuthResponse authResponse = userService.createUser(authRequest);
+        AuthResponse authResponse = userService.createUser(user);
         return ResponseEntity.ok(authResponse);
     }
 }

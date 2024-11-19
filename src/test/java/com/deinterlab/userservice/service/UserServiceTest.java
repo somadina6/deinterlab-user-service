@@ -1,10 +1,8 @@
 package com.deinterlab.userservice.service;
 
 import com.deinterlab.userservice.exception.UserException;
-import com.deinterlab.userservice.model.AuthRequest;
 import com.deinterlab.userservice.model.AuthResponse;
 import com.deinterlab.userservice.model.User;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,8 @@ class UserServiceTest {
         String password = "password";
         String firstName = "Somadina";
         String lastName = "Eze";
-        AuthRequest authRequest = new AuthRequest(email, password, firstName, lastName);
+        String phone = "08012345678";
+        User authRequest = new User(email, password, firstName, lastName, phone);
 
         userService.createUser(authRequest);
     }
@@ -45,7 +44,8 @@ class UserServiceTest {
         String password = "password";
         String firstName = "Somadina";
         String lastName = "Eze";
-        AuthRequest authRequest = new AuthRequest(email, password, firstName, lastName);
+        String phone = "08012345678";
+        User authRequest = new User(email, password, firstName, lastName, phone);
 
         AuthResponse response = userService.createUser(authRequest);
         assertEquals(200, response.getStatus());

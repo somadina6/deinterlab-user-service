@@ -1,7 +1,6 @@
 package com.deinterlab.userservice.controller;
 
 
-import com.deinterlab.userservice.dto.UserDTO;
 import com.deinterlab.userservice.model.AuthResponse;
 
 import com.deinterlab.userservice.model.User;
@@ -40,6 +39,7 @@ class AuthControllerTest {
     private static final String TEST_PASSWORD = "my-password";
     private static final String TEST_FIRST_NAME = "Somadina";
     private static final String TEST_LAST_NAME = "Eze";
+    private static final String TEST_PHONE_NUMBER = "08012345678";
 
     @BeforeEach
     void setUp() {
@@ -86,7 +86,7 @@ class AuthControllerTest {
         // When
         MvcResult registrationResult = performRegistrationWithInvalidEmail(registrationPayload);
         assertEquals(400, registrationResult.getResponse().getStatus(), "Status should be 400");
-        assertTrue(registrationResult.getResponse().getContentAsString().contains("Email should be valid"),
+        assertTrue(registrationResult.getResponse().getContentAsString().contains("must be a well-formed email address"),
                 "Response should contain error message");
     }
 
@@ -107,14 +107,30 @@ class AuthControllerTest {
                 "Response should contain error message");
     }
 
+    @Test
+    @DisplayName("Test user registration with no phone number")
+    @Order(5)
+    void testRegistrationWithNoPhoneNumber() throws Exception {
+        // Given
+        String registrationPayload = createRegistrationPayload().replace(TEST_PHONE_NUMBER, "");
+
+        // When
+        MvcResult registrationResult = performRegistration(registrationPayload);
+
+        // Then
+        verifyUserCreatedInDatabase();
+        verifyRegistrationResponse(registrationResult);
+    }
+
     private String createRegistrationPayload() {
         return String.format("""
                 {
                     "email": "%s",
                     "password": "%s",
                     "firstName": "%s",
-                    "lastName": "%s"
-                }""", TEST_EMAIL, TEST_PASSWORD, TEST_FIRST_NAME, TEST_LAST_NAME);
+                    "lastName": "%s",
+                    "phoneNumber": "%s"
+                }""", TEST_EMAIL, TEST_PASSWORD, TEST_FIRST_NAME, TEST_LAST_NAME, TEST_PHONE_NUMBER);
     }
 
     private String createLoginPayload() {

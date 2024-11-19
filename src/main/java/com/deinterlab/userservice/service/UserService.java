@@ -2,7 +2,6 @@ package com.deinterlab.userservice.service;
 
 import com.deinterlab.userservice.dto.UserDTO;
 import com.deinterlab.userservice.exception.UserException;
-import com.deinterlab.userservice.model.AuthRequest;
 import com.deinterlab.userservice.model.AuthResponse;
 import com.deinterlab.userservice.model.User;
 import com.deinterlab.userservice.repository.UserRepository;
@@ -34,20 +33,20 @@ public class UserService {
     /**
      * Create a new user
      *
-     * @param authRequest user details
+     * @param user user details
      * @return response
      */
-    public AuthResponse createUser(AuthRequest authRequest) {
+    public AuthResponse createUser(User user) {
         // Check if the user already exists
-        if (userRepository.findUserByEmail(authRequest.getEmail()).isPresent()) {
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
             throw new UserException("User already exists", HttpStatus.BAD_REQUEST);
         }
         // Create a new User object
-        String hashedPassword = BCrypt.hashpw(authRequest.getPassword(), BCrypt.gensalt());
-        User user = new User(authRequest.getEmail(), hashedPassword, authRequest.getFirstName(), authRequest.getLastName());
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        User newUser = new User(user.getEmail(), hashedPassword, user.getFirstName(), user.getLastName(), user.getPhoneNumber());
 
         // Save the user to the database
-        userRepository.save(user);
+        userRepository.save(newUser);
 
         return new AuthResponse(200, "User created successfully");
     }
