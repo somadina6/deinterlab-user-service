@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
-    `role` VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER'
+    role VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER'
     );
